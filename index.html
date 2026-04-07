@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎰 抽獎系統</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎰</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Syne+Mono&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- BG GRID -->
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="logo">🎰 <span>LUCKY DRAW</span></div>
+    <nav class="header-nav">
+      <button class="nav-btn active" data-view="draw">抽獎</button>
+      <button class="nav-btn" data-view="setup">名單設定</button>
+      <button class="nav-btn" data-view="history">歷史紀錄</button>
+    </nav>
+  </header>
+
+  <!-- ── VIEW: DRAW ── -->
+  <main id="view-draw" class="view active">
+    <section class="draw-stage">
+
+      <!-- Prize selector -->
+      <div class="prize-bar" id="prize-bar">
+        <!-- rendered by JS -->
+      </div>
+
+      <!-- Slot machine -->
+      <div class="machine-wrap">
+        <div class="machine-glow"></div>
+        <div class="machine">
+          <div class="machine-label" id="machine-label">選擇獎項開始抽獎</div>
+          <div class="reel-window">
+            <div class="reel-track" id="reel-track">
+              <div class="reel-name idle">— — —</div>
+            </div>
+            <div class="reel-edge top"></div>
+            <div class="reel-edge bottom"></div>
+            <div class="scan-line"></div>
+          </div>
+          <div class="winner-chips" id="winner-chips"></div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <div class="qty-control">
+          <button class="qty-btn" id="qty-minus">−</button>
+          <div class="qty-box">
+            <span class="qty-num" id="qty-num">1</span>
+            <span class="qty-unit">人</span>
+          </div>
+          <button class="qty-btn" id="qty-plus">＋</button>
+        </div>
+        <button class="btn-draw" id="btn-draw" disabled>
+          <span class="btn-draw-text">開始抽獎</span>
+          <span class="btn-draw-bg"></span>
+        </button>
+      </div>
+
+      <!-- Status bar -->
+      <div class="status-bar" id="status-bar">
+        <span id="status-pool">請先在「名單設定」匯入參與者</span>
+      </div>
+    </section>
+  </main>
+
+  <!-- ── VIEW: SETUP ── -->
+  <main id="view-setup" class="view">
+    <div class="setup-grid">
+
+      <!-- Left: Participants -->
+      <section class="setup-card">
+        <h2 class="card-title">👥 參與名單</h2>
+        <div class="import-tabs">
+          <button class="itab active" data-itab="paste">貼上文字</button>
+          <button class="itab" data-itab="file">上傳 CSV</button>
+        </div>
+
+        <div id="itab-paste" class="itab-content active">
+          <label class="field-label">每行輸入一位參與者姓名</label>
+          <textarea id="paste-input" rows="10" placeholder="王小明&#10;李大華&#10;陳美玲&#10;&#10;也支援 CSV 格式：&#10;A001,王小明&#10;A002,李大華"></textarea>
+          <div class="btn-row">
+            <button class="btn-solid" id="btn-import-paste">匯入名單</button>
+            <button class="btn-ghost" id="btn-clear-participants">清除名單</button>
+          </div>
+        </div>
+
+        <div id="itab-file" class="itab-content">
+          <label class="file-drop" id="file-drop">
+            <span class="file-drop-icon">📂</span>
+            <span>拖曳 CSV / TXT 到此處</span>
+            <span class="file-hint">或點擊選擇檔案</span>
+            <input type="file" id="file-input" accept=".csv,.txt" hidden />
+          </label>
+        </div>
+
+        <!-- Participant chips -->
+        <div class="participant-chips" id="participant-chips">
+          <div class="chips-empty">尚無參與者</div>
+        </div>
+        <div class="participant-meta" id="participant-meta"></div>
+      </section>
+
+      <!-- Right: Prizes -->
+      <section class="setup-card">
+        <h2 class="card-title">🏆 獎項設定</h2>
+        <div id="prize-editor"></div>
+        <div class="btn-row" style="margin-top:12px">
+          <button class="btn-ghost" id="btn-add-prize">＋ 新增獎項</button>
+          <button class="btn-solid" id="btn-save-prizes">儲存獎項</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ── VIEW: HISTORY ── -->
+  <main id="view-history" class="view">
+    <div class="history-header">
+      <h2 class="card-title" style="margin:0">🏆 中獎紀錄</h2>
+      <div style="display:flex;gap:10px">
+        <button class="btn-ghost" id="btn-export">⬇ 匯出 CSV</button>
+        <button class="btn-danger" id="btn-clear-results">清除結果</button>
+      </div>
+    </div>
+    <div class="history-table-wrap" id="history-table-wrap">
+      <div class="empty-state">
+        <div class="empty-icon">🎲</div>
+        <p>尚無中獎紀錄</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- CONFETTI CANVAS -->
+  <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+  <script src="app.js"></script>
+</body>
+</html>
